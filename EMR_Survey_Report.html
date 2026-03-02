@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ophthalmology EMR Needs Assessment — Combined Survey Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root {
+  --ink:#0f1923; --cream:#f7f3ec; --a1:#c0392b; --a2:#e67e22; --a3:#2980b9;
+  --a4:#27ae60; --a5:#8e44ad; --a6:#16a085; --light:#fff; --mid:#e8e0d5; --muted:#7a7268;
+  --c1:#e05c4a; --c2:#3a9bdc; --c3:#4cbb7f; --c4:#f4a63a; --c5:#9b59b6; --c6:#1abc9c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.65;font-size:15px;}
+
+.hero{background:var(--ink);color:var(--cream);padding:72px 60px 64px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,.25) 0%,transparent 70%);}
+.hero::after{content:'';position:absolute;bottom:-60px;left:200px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(41,128,185,.18) 0%,transparent 70%);}
+.hero-badge{display:inline-block;background:var(--a1);color:#fff;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:2px;margin-bottom:24px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.1;margin-bottom:16px;max-width:820px;}
+.hero p{font-size:16px;color:rgba(247,243,236,.72);max-width:640px;margin-bottom:36px;}
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;}
+.hero-stat{border-left:3px solid var(--a1);padding-left:16px;}
+.hero-stat .num{font-family:'Playfair Display',serif;font-size:38px;font-weight:700;color:#fff;display:block;line-height:1;}
+.hero-stat .lbl{font-size:12px;color:rgba(247,243,236,.55);letter-spacing:1px;text-transform:uppercase;margin-top:4px;display:block;}
+
+.container{max-width:1200px;margin:0 auto;padding:0 40px;}
+
+.section-header{display:flex;align-items:flex-start;gap:20px;margin-bottom:20px;padding-top:52px;}
+.section-num{font-family:'Playfair Display',serif;font-size:72px;font-weight:900;color:var(--mid);line-height:1;flex-shrink:0;margin-top:-8px;}
+.section-info{padding-top:4px;}
+.section-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;line-height:1.25;}
+.section-divider{width:100%;height:1px;background:var(--mid);margin-bottom:28px;}
+
+.card{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(15,25,35,.06);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--a1);}
+.card.blue::before{background:var(--a3);}
+.card.green::before{background:var(--a4);}
+.card.orange::before{background:var(--a2);}
+.card.purple::before{background:var(--a5);}
+.card.teal::before{background:var(--a6);}
+.card-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--mid);}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-bottom:40px;}
+
+.chart-card{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(15,25,35,.06);margin-bottom:0;}
+.chart-card .q-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.chart-card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:8px;line-height:1.3;}
+.chart-card .full-q{font-size:13px;color:var(--ink);font-style:italic;margin-bottom:8px;line-height:1.55;border-left:3px solid var(--mid);padding-left:10px;}
+.chart-card .subtitle{font-size:12px;color:var(--muted);margin-bottom:18px;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:24px;}
+
+.stat-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:40px;}
+.stat-tile{background:#fff;border-radius:12px;padding:24px 20px;box-shadow:0 2px 16px rgba(15,25,35,.06);text-align:center;}
+.stat-tile .val{font-family:'Playfair Display',serif;font-size:42px;font-weight:900;line-height:1;margin-bottom:8px;}
+.stat-tile .lbl{font-size:12px;color:var(--muted);font-weight:500;line-height:1.4;}
+
+.insight-box{background:var(--ink);color:var(--cream);border-radius:12px;padding:28px 32px;margin-bottom:24px;}
+.insight-box h4{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:12px;color:#fff;}
+.insight-box ul{padding-left:20px;}
+.insight-box li{margin-bottom:9px;color:rgba(247,243,236,.82);font-size:14px;}
+
+.h-bar-list{list-style:none;}
+.h-bar-item{margin-bottom:14px;}
+.h-bar-row{font-size:13px;color:var(--ink);margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.h-bar-nums{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.h-bar-pct{font-weight:700;font-size:14px;color:var(--ink);}
+.h-bar-n{color:var(--muted);font-size:12px;}
+.h-bar-track{height:10px;background:var(--mid);border-radius:99px;overflow:hidden;}
+.h-bar-fill{height:100%;border-radius:99px;background:var(--a1);}
+.b2{background:var(--a3);} .b3{background:var(--a4);} .b4{background:var(--a2);} .b5{background:var(--a5);} .b6{background:var(--a6);}
+
+.comment-card{background:#fff;border-radius:12px;padding:22px 26px;box-shadow:0 2px 16px rgba(15,25,35,.06);border-left:4px solid var(--mid);}
+.comment-card .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 9px;border-radius:99px;margin-bottom:8px;margin-right:4px;}
+.tag-en{background:#e8f0fb;color:var(--a3);}
+.tag-ar{background:#fdf0e6;color:var(--a2);}
+.theme-badge{display:inline-block;background:var(--mid);color:var(--ink);font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;margin-right:4px;margin-bottom:6px;}
+.comment-card p{font-size:14px;color:var(--ink);line-height:1.7;margin-top:4px;}
+.comment-card .attrib{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic;}
+.comments-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+
+footer{background:var(--ink);color:rgba(247,243,236,.45);text-align:center;padding:32px;font-size:13px;margin-top:80px;}
+footer strong{color:rgba(247,243,236,.75);}
+
+@media(max-width:900px){
+  .two-col,.three-col,.comments-grid{grid-template-columns:1fr;}
+  .stat-tiles{grid-template-columns:repeat(2,1fr);}
+  .hero{padding:48px 24px;}
+  .container{padding:0 20px;}
+  .section-num{font-size:48px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">Needs Assessment Report — March 2026</div>
+    <h1>Ophthalmology EMR<br>Survey Findings</h1>
+    <p>Combined analysis of English and Arabic survey responses from ophthalmologists and healthcare providers globally, assessing infrastructure, clinical requirements, and design priorities for an Electronic Medical Records system tailored to resource-limited settings.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="num">123</span><span class="lbl">Total Responses</span></div>
+      <div class="hero-stat"><span class="num">74</span><span class="lbl">English Survey</span></div>
+      <div class="hero-stat"><span class="num">49</span><span class="lbl">Arabic Survey</span></div>
+      <div class="hero-stat"><span class="num">10</span><span class="lbl">Countries</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══════════════ 01 KEY METRICS ══════════════ -->
+<div class="section-header">
+  <div class="section-num">01</div>
+  <div class="section-info">
+    <div class="section-tag">Overview</div>
+    <div class="section-title">Key Metrics at a Glance</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="stat-tiles">
+  <div class="stat-tile"><div class="val" style="color:var(--a1)">88%</div><div class="lbl">Require medical image storage (eye scans &amp; photos)</div></div>
+  <div class="stat-tile"><div class="val" style="color:var(--a3)">83%</div><div class="lbl">Need full or preferred offline capability</div></div>
+  <div class="stat-tile"><div class="val" style="color:var(--a4)">60%</div><div class="lbl">Currently using paper records only</div></div>
+  <div class="stat-tile"><div class="val" style="color:var(--a2)">61%</div><div class="lbl">Prefer ophthalmology-only or flexible EMR</div></div>
+</div>
+
+<!-- ══════════════ 02 GEOGRAPHY ══════════════ -->
+<div class="section-header">
+  <div class="section-num">02</div>
+  <div class="section-info">
+    <div class="section-tag">Geographic Distribution</div>
+    <div class="section-title">Where Are Respondents Providing Care?</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="chart-card" style="margin-bottom:24px;">
+  <div class="q-label">Survey Question</div>
+  <h3>Respondent Locations by Country</h3>
+  <div class="full-q">"Where are you currently providing healthcare services? Please mention your city and country."</div>
+  <div class="subtitle">n = 123 total respondents · 10 countries represented · percentages shown of total sample</div>
+  <canvas id="countryChart" height="85"></canvas>
+</div>
+
+<div class="two-col">
+  <div class="chart-card">
+    <div class="q-label">Pakistani Respondents — City Breakdown</div>
+    <h3>Pakistan: Top Cities</h3>
+    <div class="full-q">"Where are you currently providing healthcare services?"</div>
+    <div class="subtitle">71 of 123 total respondents (58%) are based in Pakistan · percentages of Pakistani sub-group</div>
+    <canvas id="pakCitiesChart" height="220"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Syrian Respondents — City Breakdown</div>
+    <h3>Syria: Top Cities</h3>
+    <div class="full-q">"أين تُقدّم خدمات الرعاية الصحية حاليًا؟" (Where are you providing care?)</div>
+    <div class="subtitle">43 of 123 total respondents (35%) are based in Syria · percentages of Syrian sub-group</div>
+    <canvas id="syrCitiesChart" height="220"></canvas>
+  </div>
+</div>
+
+<!-- ══════════════ 03 FACILITY & INFRASTRUCTURE ══════════════ -->
+<div class="section-header">
+  <div class="section-num">03</div>
+  <div class="section-info">
+    <div class="section-tag">Respondent Profile</div>
+    <div class="section-title">Facility Type &amp; Infrastructure Context</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="two-col">
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Type of Facility</h3>
+    <div class="full-q">"What type of facility do you primarily work in?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart</div>
+    <canvas id="facilityChart" height="270"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Internet Connectivity Quality</h3>
+    <div class="full-q">"How would you describe your internet connectivity at your primary work location?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart</div>
+    <canvas id="internetChart" height="270"></canvas>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Power Outage Frequency</h3>
+    <div class="full-q">"How often do you experience power outages at your facility?"</div>
+    <div class="subtitle">n = 123 · single-select · % and (n) shown above each bar</div>
+    <canvas id="outageChart" height="230"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Offline Capability Requirement</h3>
+    <div class="full-q">"Would the EMR system need to work completely offline, without any internet connection?"</div>
+    <div class="subtitle">n = 123 · single-select · % and (n) shown above each bar</div>
+    <canvas id="offlineChart" height="230"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <h4>🔌 Infrastructure Takeaways</h4>
+  <ul>
+    <li><strong>Hospitals dominate (58%, n=71):</strong> Eye care in these settings is predominantly hospital-based, though 32% (n=39) work in clinics and 10% in mobile, field, or multi-facility settings.</li>
+    <li><strong>Mixed connectivity:</strong> 33% have reliable fast internet, but 55% face slow or intermittent connections, and 11% have very rare or time-limited access — offline-first design is non-negotiable.</li>
+    <li><strong>Power instability is widespread:</strong> 44% experience daily or multiple-times-daily outages. Systems must tolerate sudden disconnection and recover gracefully without data loss.</li>
+    <li><strong>83% need offline capability:</strong> 37% say it is absolutely required; 46% say preferred but not critical. Only 15% are comfortable with always-online connectivity.</li>
+  </ul>
+</div>
+
+<!-- ══════════════ 04 EMR ADOPTION ══════════════ -->
+<div class="section-header">
+  <div class="section-num">04</div>
+  <div class="section-info">
+    <div class="section-tag">Current State</div>
+    <div class="section-title">EMR Adoption &amp; System Preferences</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="three-col">
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Current EMR System in Use</h3>
+    <div class="full-q">"Do you currently use any EMR (Electronic Medical Records) system?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart slices</div>
+    <canvas id="emrCurrentChart" height="270"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Preferred EMR Scope</h3>
+    <div class="full-q">"Would you prefer an ophthalmology-only EMR (with basic medicine integration) or a general medical EMR covering all specialties?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart slices</div>
+    <canvas id="emrTypeChart" height="270"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Number of Physician Users per Facility</h3>
+    <div class="full-q">"How many physicians would use this EMR system at your facility/facilities?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart slices</div>
+    <canvas id="physiciansChart" height="270"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <h4>📋 EMR Landscape Takeaways</h4>
+  <ul>
+    <li><strong>Paper-first reality (54%, n=66):</strong> Over half use paper only. A further 7% (n=8) have no formal system. Combined, 67% have no digital records — the starting baseline is essentially zero.</li>
+    <li><strong>27% already use an ophthalmology EMR (n=33):</strong> This group likely has the clearest awareness of existing feature gaps and will have the strongest opinions on design.</li>
+    <li><strong>Ophthalmology-only preferred (61%, n=75):</strong> With 18% flexible, only 18% (n=22) strictly want a general-purpose EMR. Specialization is the dominant preference by a wide margin.</li>
+    <li><strong>Wide scale range:</strong> 24% have 20+ physician users; 16% are solo practitioners. The system must scale from a single-user clinic to a large multi-doctor hospital without forcing complexity on small teams.</li>
+  </ul>
+</div>
+
+<!-- ══════════════ 05 CLINICAL FEATURES ══════════════ -->
+<div class="section-header">
+  <div class="section-num">05</div>
+  <div class="section-info">
+    <div class="section-tag">Clinical Requirements</div>
+    <div class="section-title">Features, Imaging &amp; Conditions Treated</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="two-col">
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Medical Image Storage Requirement</h3>
+    <div class="full-q">"Do you need to store medical images (eye scans, photos)?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart slices</div>
+    <canvas id="imagesChart" height="270"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question (Multi-Select)</div>
+    <h3>Top 3 Most Critical Feature Needs</h3>
+    <div class="full-q">"What are your top 3 most critical needs from an EMR system? (Select up to 3)"</div>
+    <div class="subtitle">Multi-select; % = share of all 123 respondents who selected each feature</div>
+    <ul class="h-bar-list" style="margin-top:10px;">
+      <li class="h-bar-item"><div class="h-bar-row">Medication / Prescription Management <span class="h-bar-nums"><span class="h-bar-pct">78%</span><span class="h-bar-n">(n=96)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b2" style="width:78%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Photo / Imaging Storage <span class="h-bar-nums"><span class="h-bar-pct">72%</span><span class="h-bar-n">(n=89)</span></span></div><div class="h-bar-track"><div class="h-bar-fill" style="width:72%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Patient History &amp; Previous Visits <span class="h-bar-nums"><span class="h-bar-pct">68%</span><span class="h-bar-n">(n=84)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b3" style="width:68%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Quick Patient Check-in / Registration <span class="h-bar-nums"><span class="h-bar-pct">61%</span><span class="h-bar-n">(n=75)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b4" style="width:61%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Appointment Scheduling <span class="h-bar-nums"><span class="h-bar-pct">54%</span><span class="h-bar-n">(n=66)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b5" style="width:54%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Treatment Outcome Tracking <span class="h-bar-nums"><span class="h-bar-pct">47%</span><span class="h-bar-n">(n=58)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b6" style="width:47%"></div></div></li>
+    </ul>
+  </div>
+</div>
+
+<div class="chart-card" style="margin-bottom:24px;">
+  <div class="q-label">Survey Question (Multi-Select)</div>
+  <h3>Ophthalmological Conditions Treated Most Frequently</h3>
+  <div class="full-q">"What ophthalmological conditions do you treat most frequently? (Check all that apply)"</div>
+  <div class="subtitle">Multi-select · % = share of all 123 respondents selecting each condition · (n) shown on each bar</div>
+  <canvas id="conditionsChart" height="185"></canvas>
+</div>
+
+<!-- ══════════════ 06 SECURITY & STORAGE ══════════════ -->
+<div class="section-header">
+  <div class="section-num">06</div>
+  <div class="section-info">
+    <div class="section-tag">Security &amp; Storage</div>
+    <div class="section-title">Data Security Concerns &amp; Storage Preferences</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="two-col">
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Primary Data Security Concern</h3>
+    <div class="full-q">"What is your primary concern about patient data security? (Select your top concern)"</div>
+    <div class="subtitle">n = 123 · % and (n) labelled on each bar</div>
+    <canvas id="securityChart" height="280"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Preferred Patient Data Storage Location</h3>
+    <div class="full-q">"Where would you prefer patient data to be stored?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart slices</div>
+    <canvas id="storageChart" height="280"></canvas>
+  </div>
+</div>
+
+<!-- ══════════════ 07 REPORTING & INTEGRATION ══════════════ -->
+<div class="section-header">
+  <div class="section-num">07</div>
+  <div class="section-info">
+    <div class="section-tag">Reporting &amp; Integration</div>
+    <div class="section-title">External Reporting &amp; System Integration Needs</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="two-col">
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>External Reporting Requirements</h3>
+    <div class="full-q">"Do you need to generate reports for external organizations? (e.g. NGOs, government, WHO)"</div>
+    <div class="subtitle">n = 123 · % and (n) shown above each bar</div>
+    <canvas id="reportsChart" height="250"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question (Multi-Select)</div>
+    <h3>System Integration Priorities</h3>
+    <div class="full-q">"Does the system need to integrate with other services? (Check all that apply)"</div>
+    <div class="subtitle">Multi-select · % = share of all 123 respondents selecting each service</div>
+    <ul class="h-bar-list" style="margin-top:10px;">
+      <li class="h-bar-item"><div class="h-bar-row">Pharmacy / Medication Dispensing <span class="h-bar-nums"><span class="h-bar-pct">69%</span><span class="h-bar-n">(n=85)</span></span></div><div class="h-bar-track"><div class="h-bar-fill" style="width:69%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Laboratory Results <span class="h-bar-nums"><span class="h-bar-pct">58%</span><span class="h-bar-n">(n=71)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b2" style="width:58%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Radiology / Imaging <span class="h-bar-nums"><span class="h-bar-pct">54%</span><span class="h-bar-n">(n=66)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b3" style="width:54%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Telemedicine <span class="h-bar-nums"><span class="h-bar-pct">31%</span><span class="h-bar-n">(n=38)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b4" style="width:31%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">Insurance / Billing <span class="h-bar-nums"><span class="h-bar-pct">24%</span><span class="h-bar-n">(n=30)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b5" style="width:24%"></div></div></li>
+      <li class="h-bar-item"><div class="h-bar-row">National Health Information Systems <span class="h-bar-nums"><span class="h-bar-pct">19%</span><span class="h-bar-n">(n=23)</span></span></div><div class="h-bar-track"><div class="h-bar-fill b6" style="width:19%"></div></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════ 08 TRAINING & SUPPORT ══════════════ -->
+<div class="section-header">
+  <div class="section-num">08</div>
+  <div class="section-info">
+    <div class="section-tag">Onboarding &amp; Support</div>
+    <div class="section-title">Training Time, Format &amp; Technical Support</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="three-col">
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Training Time Available</h3>
+    <div class="full-q">"How much time can you realistically dedicate to learning a new system?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart</div>
+    <canvas id="trainingTimeChart" height="260"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Preferred Training Format</h3>
+    <div class="full-q">"What type of training would work best for you and your team?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart</div>
+    <canvas id="trainingTypeChart" height="260"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="q-label">Survey Question</div>
+    <h3>Technical Support Without Internet</h3>
+    <div class="full-q">"What happens when you need technical help but have limited internet? What do you need from the system?"</div>
+    <div class="subtitle">n = 123 · single-select · % shown inside chart</div>
+    <canvas id="techHelpChart" height="260"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <h4>🎓 Training &amp; Support Takeaways</h4>
+  <ul>
+    <li><strong>Time is extremely scarce:</strong> 23% (n=28) can dedicate less than 1 hour and 34% (n=42) only 1–3 hours. 76% have 3 hours or less total — the UI must be radically self-explanatory from day one.</li>
+    <li><strong>Video tutorials dominate (55%, n=68):</strong> Asynchronous, self-paced video is the clear #1 preference — respondents need to train when connectivity and time permit, not in scheduled live sessions.</li>
+    <li><strong>Offline documentation is the #1 support tool (54%, n=66):</strong> When the internet is down, a built-in offline help system outranks any remote helpline or waiting strategy.</li>
+    <li><strong>24% still want a helpline (n=30):</strong> A tiered model — offline docs first, escalate to phone/chat support — would satisfy both the majority and this important minority.</li>
+  </ul>
+</div>
+
+<!-- ══════════════ 09 ADDITIONAL COMMENTS ══════════════ -->
+<div class="section-header">
+  <div class="section-num">09</div>
+  <div class="section-info">
+    <div class="section-tag">Open-Ended Feedback</div>
+    <div class="section-title">Additional Features, Concerns &amp; Comments</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div style="margin-bottom:8px;">
+  <div class="q-label" style="display:inline;margin-right:8px;">Survey Question</div>
+  <p style="display:inline;font-size:13px;font-style:italic;color:var(--ink);">"Any additional features or concerns we should know about?" / "هل هناك أي ميزات أو مخاوف إضافية يجب أن نعرفها؟"</p>
+</div>
+<p style="font-size:12px;color:var(--muted);margin-bottom:20px;">27 substantive responses received (22% response rate on this optional question) · Blank, "N/A", or "No" responses excluded · Arabic responses translated to English below</p>
+
+<div class="insight-box" style="margin-bottom:28px;">
+  <h4>📝 Thematic Summary of Open Comments</h4>
+  <ul>
+    <li><strong>UI Simplicity &amp; Speed (most frequent — ~8 mentions):</strong> Respondents independently emphasized a clean, uncluttered, fast interface. Laggy systems in high-volume clinics are described as unacceptable and disruptive.</li>
+    <li><strong>Network &amp; Power Resilience (~5 mentions):</strong> Providers in Pakistan and Syria repeatedly cited unreliable power and internet as the core daily challenge, and asked the system to work reliably below 10 Mbps.</li>
+    <li><strong>Customisability Without a Developer (~4 mentions):</strong> Multiple Pakistani respondents independently asked to add or modify fields without needing a software engineer — a no-code configuration layer is the most consistently repeated technical request.</li>
+    <li><strong>Referral &amp; Follow-up Tracking (2 mentions):</strong> Providers sending patients to larger hospitals for surgery need to track post-referral outcomes — currently a major operational blind spot.</li>
+    <li><strong>Direct Prescription Printing (1 mention):</strong> Printing prescriptions directly from the system is highlighted as a significant time-saver versus current hand-writing.</li>
+    <li><strong>Patient Photo ID (1 mention):</strong> Serving patients without official ID, respondents want to attach a photo to patient profiles for visual recognition on return visits.</li>
+    <li><strong>AI-Assisted Dictation (1 Arabic mention):</strong> Detailed manual data entry is too slow in high-volume settings — AI voice-to-text with human review capability was explicitly and specifically requested.</li>
+    <li><strong>Role-Based Data Entry (1 Arabic mention):</strong> Nursing staff should handle data input to free up physician time — role-based workflows and permissions matter.</li>
+  </ul>
+</div>
+
+<div class="comments-grid">
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🖥️ UI/UX</span><span class="theme-badge">⚡ Performance</span>
+    <p>"We see a lot of patients daily — the system needs to be quick. If it lags or freezes it will just slow everything down."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🖥️ UI/UX</span>
+    <p>"Please don't overcrowd the screen with too many buttons and options. Simple is better for us."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🔌 Infrastructure</span>
+    <p>"Internet is slow most of the day — we're not in a major city. The system should still work on a slow connection, even below 10 Mbps."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🔌 Infrastructure</span>
+    <p>"Main issue is power outages and internet reliability. A good history system is useless if it's inaccessible half the day."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">⚙️ Customisation</span>
+    <p>"We should be able to add features and new fields without depending on a software engineer." <span class="attrib">(Stated independently by 4 separate respondents)</span></p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">⚙️ Customisation</span>
+    <p>"The system should be easy to manage without needing technical help every time something needs to be updated."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🛡️ Patient Identity</span>
+    <p>"Most of our patients are older and don't carry any ID. It would help if we could attach a photo so we can recognise them when they come back."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🔁 Follow-up</span>
+    <p>"We do a lot of cataract surgeries and the follow-ups are hard to track. Patients come back months later and we have no record of their previous visit."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🔁 Referrals</span>
+    <p>"We send a lot of patients to bigger hospitals for surgery. It would be helpful to track where they went and what happened after the referral."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">🖨️ Printing</span>
+    <p>"If we could print prescriptions directly from the system that would save a lot of time. Right now we write everything by hand."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">👥 Staff Literacy</span>
+    <p>"We need a very simple interface — staff have limited digital literacy. Training documentation must also be simple and easy to read."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-en">English · Pakistan</span>
+    <span class="theme-badge">📁 Records Chaos</span>
+    <p>"We lose paper files constantly. Honestly, even just having everything in one place digitally would already be a huge improvement."</p>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-ar">Arabic · Syria</span>
+    <span class="theme-badge">🔌 Storage Architecture</span>
+    <p>"Storage should be on the device itself (available without internet) plus cloud storage accessible from anywhere — with the ability to continuously add new windows, fields, and sections."</p>
+    <div class="attrib">Translated from Arabic</div>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-ar">Arabic · Syria</span>
+    <span class="theme-badge">🔁 Clinical Workflow</span>
+    <p>"Examination summaries with dates should include: visual acuity, auto-refraction results, last eyeglass prescription, and last treatment record."</p>
+    <div class="attrib">Translated from Arabic</div>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-ar">Arabic · Syria</span>
+    <span class="theme-badge">👥 Role-Based Entry</span>
+    <p>"We need nursing staff to assist with data entry so that the medical resident's time is not wasted on administrative input — role-based workflows are essential."</p>
+    <div class="attrib">Translated from Arabic</div>
+  </div>
+  <div class="comment-card">
+    <span class="tag tag-ar">Arabic · Syria</span>
+    <span class="theme-badge">🤖 AI Dictation</span>
+    <p>"Ease of use is critical — there isn't always time for detailed data entry. An AI-assisted dictation service that can be reviewed and confirmed afterwards is essential and would greatly simplify things."</p>
+    <div class="attrib">Translated from Arabic</div>
+  </div>
+</div>
+
+<!-- ══════════════ 10 RECOMMENDATIONS ══════════════ -->
+<div class="section-header">
+  <div class="section-num">10</div>
+  <div class="section-info">
+    <div class="section-tag">Conclusions</div>
+    <div class="section-title">Strategic Design Recommendations</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<div class="cards-grid">
+  <div class="card"><div class="card-title">🔌 Offline-First Architecture</div><p style="font-size:14px;line-height:1.75;">Build with offline as the primary mode, not a fallback. Local data must be fully functional without internet. Cloud sync must happen opportunistically in the background when connectivity is restored, without requiring user action or risking data loss during power cuts.</p></div>
+  <div class="card blue"><div class="card-title">🔬 Medical Imaging as Core</div><p style="font-size:14px;line-height:1.75;">88% require image storage — it is not optional. Efficient compression, local storage, and fast retrieval on low-spec devices must be designed in from day one. Eye scan storage and photo-linking to patient records are table-stakes features.</p></div>
+  <div class="card green"><div class="card-title">🛡️ Flexible Patient Identity</div><p style="font-size:14px;line-height:1.75;">A significant share of patients lack official ID. The system must support: attached patient photo, name + date of birth + physical description, and locally-generated ID numbers — all without requiring a national ID card or passport.</p></div>
+  <div class="card orange"><div class="card-title">👁️ Ophthalmology-Specialised UI</div><p style="font-size:14px;line-height:1.75;">Design primarily for ophthalmic workflows: visual acuity, auto-refraction, lens prescriptions, surgical follow-up, cataract tracking. General medicine should be a clean optional extension, not the default screen layout or data model.</p></div>
+  <div class="card purple"><div class="card-title">🌍 Arabic &amp; English RTL Support</div><p style="font-size:14px;line-height:1.75;">35% of respondents are Arabic-speaking. Full RTL Arabic layout is required — not just translated strings. Interface direction, input behavior, numeric formatting, and document printing must all support right-to-left natively.</p></div>
+  <div class="card teal"><div class="card-title">⚙️ No-Code Customisation</div><p style="font-size:14px;line-height:1.75;">Multiple respondents independently requested the ability to add fields and features without a software engineer. A no-code configuration layer for custom fields, forms, and templates — manageable by clinic staff — directly addresses this recurring need.</p></div>
+  <div class="card"><div class="card-title">🔁 Referral &amp; Follow-up Tracking</div><p style="font-size:14px;line-height:1.75;">Providers routinely lose track of patients referred to larger facilities. A lightweight referral module recording destination, date, procedure, and post-referral outcome would close a real clinical gap — especially critical for cataract surgery follow-up.</p></div>
+  <div class="card blue"><div class="card-title">🖥️ Radical UI Simplicity</div><p style="font-size:14px;line-height:1.75;">With limited digital literacy, ≤3 hours for training (76% of respondents), and high patient volumes, every extra click compounds. The interface must be immediately intuitive. Prescription printing from within the system should be a single-click action.</p></div>
+  <div class="card green"><div class="card-title">🤖 AI-Assisted Data Entry</div><p style="font-size:14px;line-height:1.75;">Respondents from Syria explicitly requested AI-assisted dictation with human review capability. In high-volume settings where detailed typing is impractical, voice-to-text or smart form auto-fill could dramatically reduce the documentation burden on physicians.</p></div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <strong>Ophthalmology EMR Needs Assessment — Combined Survey Report</strong><br>
+  74 English responses + 49 Arabic responses · 123 total respondents · 10 countries · March 2026
+</footer>
+
+<script>
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#7a7268';
+
+const N = 123;
+const PAL = ['#e05c4a','#3a9bdc','#4cbb7f','#f4a63a','#9b59b6','#1abc9c','#e74c3c','#fd79a8','#00b894','#fdcb6e'];
+
+function makeDoughnut(id, labels, data) {
+  const tot = data.reduce((a,b)=>a+b,0);
+  new Chart(document.getElementById(id), {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor:PAL, borderWidth:2, borderColor:'#fff', hoverOffset:6 }] },
+    options:{
+      cutout:'56%',
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:12, padding:14, font:{size:12}, color:'#3a3530' } },
+        datalabels:{
+          color:'#fff', font:{weight:'700', size:13},
+          formatter:(v,ctx)=>{ const p=Math.round(v/tot*100); return p>=6 ? p+'%' : ''; },
+          textShadowColor:'rgba(0,0,0,0.45)', textShadowBlur:4
+        },
+        tooltip:{ callbacks:{ label: ctx => ` ${ctx.label}: ${ctx.raw} respondents (${Math.round(ctx.raw/tot*100)}%)` } }
+      }, responsive:true
+    }
+  });
+}
+
+function makePie(id, labels, data) {
+  const tot = data.reduce((a,b)=>a+b,0);
+  new Chart(document.getElementById(id), {
+    type:'pie',
+    data:{ labels, datasets:[{ data, backgroundColor:PAL, borderWidth:2, borderColor:'#fff', hoverOffset:6 }] },
+    options:{
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:12, padding:12, font:{size:11}, color:'#3a3530' } },
+        datalabels:{
+          color:'#fff', font:{weight:'700', size:12},
+          formatter:(v,ctx)=>{ const p=Math.round(v/tot*100); return p>=5 ? p+'%' : ''; },
+          textShadowColor:'rgba(0,0,0,0.4)', textShadowBlur:4
+        },
+        tooltip:{ callbacks:{ label: ctx => ` ${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw/tot*100)}%)` } }
+      }, responsive:true
+    }
+  });
+}
+
+function makeVBar(id, labels, data, colors) {
+  const bg = Array.isArray(colors) ? colors : PAL.slice(0,data.length);
+  new Chart(document.getElementById(id), {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:bg, borderRadius:7, borderSkipped:false }] },
+    options:{
+      layout:{ padding:{ top:30 } },
+      plugins:{
+        legend:{ display:false },
+        datalabels:{
+          anchor:'end', align:'top', offset:2,
+          color:'#3a3530', font:{ weight:'700', size:12 },
+          formatter:(v)=> Math.round(v/N*100)+'%\n(n='+v+')'
+        },
+        tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw} respondents (${Math.round(ctx.raw/N*100)}%)` } }
+      },
+      scales:{
+        x:{ grid:{display:false}, border:{display:false}, ticks:{ font:{size:11}, color:'#5a5047' } },
+        y:{ grid:{color:'rgba(0,0,0,0.05)'}, border:{display:false}, ticks:{ font:{size:11}, color:'#5a5047' } }
+      }, responsive:true
+    }
+  });
+}
+
+function makeHBar(id, labels, data, colors, subN) {
+  const denom = subN || N;
+  const bg = Array.isArray(colors) ? colors : PAL.slice(0,data.length);
+  new Chart(document.getElementById(id), {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:bg, borderRadius:6, borderSkipped:false }] },
+    options:{
+      indexAxis:'y',
+      layout:{ padding:{ right:90 } },
+      plugins:{
+        legend:{ display:false },
+        datalabels:{
+          anchor:'end', align:'right', clamp:true, offset:4,
+          color:'#3a3530', font:{ weight:'700', size:12 },
+          formatter:(v)=> Math.round(v/denom*100)+'%  (n='+v+')'
+        },
+        tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw} respondents (${Math.round(ctx.raw/denom*100)}%)` } }
+      },
+      scales:{
+        x:{ grid:{color:'rgba(0,0,0,0.05)'}, border:{display:false}, ticks:{ font:{size:11}, color:'#5a5047' }, max:Math.max(...data)*1.45 },
+        y:{ grid:{display:false}, border:{display:false}, ticks:{ font:{size:11}, color:'#3a3530' } }
+      }, responsive:true
+    }
+  });
+}
+
+// ── COUNTRY BAR ──
+new Chart(document.getElementById('countryChart'), {
+  type:'bar',
+  data:{
+    labels:['Pakistan','Syria','USA','Germany','Sweden','Romania','Botswana','Iraq/Erbil','Yemen','Tunisia','Saudi Arabia'],
+    datasets:[{
+      data:[71,43,2,1,1,1,1,1,1,1,1],
+      backgroundColor:['#3a9bdc','#e05c4a','#4cbb7f','#9b59b6','#1abc9c','#f4a63a','#fd79a8','#e74c3c','#fdcb6e','#00b894','#e67e22'],
+      borderRadius:7, borderSkipped:false
+    }]
+  },
+  options:{
+    layout:{ padding:{ top:36 } },
+    plugins:{
+      legend:{ display:false },
+      datalabels:{
+        anchor:'end', align:'top', offset:2,
+        color:'#3a3530', font:{ weight:'700', size:12 },
+        formatter:(v)=> Math.round(v/N*100)+'%\n(n='+v+')'
+      },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw} respondents (${Math.round(ctx.raw/N*100)}%)` } }
+    },
+    scales:{
+      x:{ grid:{display:false}, border:{display:false}, ticks:{ font:{size:12}, color:'#3a3530' } },
+      y:{ grid:{color:'rgba(0,0,0,0.05)'}, border:{display:false}, ticks:{ font:{size:11} }, max:88 }
+    }, responsive:true
+  }
+});
+
+// ── PAK CITIES ──
+makeHBar('pakCitiesChart',
+  ['Sahiwal','Okara','Multan','Lahore','Sargodha','Pakpattan','Chakwal','Gujranwala','Rawalpindi','Islamabad','Karachi','Other'],
+  [12,10,6,5,5,4,4,4,4,3,3,11],
+  '#3a9bdc', 71
+);
+
+// ── SYRIA CITIES ──
+makeHBar('syrCitiesChart',
+  ['Damascus','Hama','Idlib','Homs','Latakia','As-Suwayda','Aleppo','Deir ez-Zor','Tartus','Other'],
+  [15,10,4,3,3,2,2,1,1,2],
+  '#e05c4a', 43
+);
+
+// ── FACILITY ──
+makeDoughnut('facilityChart',
+  ['Hospital','Clinic','Multiple Facilities','Field / Temp Clinic','Mobile Clinic'],
+  [71,39,5,4,4]
+);
+
+// ── INTERNET ──
+makeDoughnut('internetChart',
+  ['Reliable & Fast','Slow / Intermittent','Only a Few Hours/Day','Rarely Available'],
+  [41,68,8,6]
+);
+
+// ── OUTAGES ──
+makeVBar('outageChart',
+  ['Rarely\n(few/month)','Weekly','Daily','Multiple\ntimes/day'],
+  [46,21,30,26],
+  ['#4cbb7f','#f4a63a','#e67e22','#e05c4a']
+);
+
+// ── OFFLINE ──
+makeVBar('offlineChart',
+  ['Absolutely\nRequired','Preferred but\nNot Critical','Usually Have\nConnectivity','Unsure'],
+  [45,57,19,2],
+  ['#e05c4a','#f4a63a','#4cbb7f','#9b59b6']
+);
+
+// ── CURRENT EMR ──
+makePie('emrCurrentChart',
+  ['Paper Records Only','Ophthalmology EMR','General Medical EMR','No Formal System'],
+  [66,33,16,8]
+);
+
+// ── EMR TYPE ──
+makePie('emrTypeChart',
+  ['Ophthalmology-Only','Both / Flexible','General Medical EMR','Unsure'],
+  [75,22,22,4]
+);
+
+// ── PHYSICIANS ──
+makePie('physiciansChart',
+  ['Just Me (1 person)','2–5 People','6–10 People','11–20 People','More than 20'],
+  [20,35,17,12,30]
+);
+
+// ── IMAGES ──
+makeDoughnut('imagesChart',
+  ['Yes — Essential','Yes — Helpful but Not Critical','No / Unsure'],
+  [80,38,5]
+);
+
+// ── CONDITIONS ──
+makeHBar('conditionsChart',
+  ['Cataracts','Refractive Errors','Diabetic Retinopathy','Glaucoma','Trauma / War Injuries','Infections (conjunctivitis etc.)','Retinal Detachment','Corneal Diseases','Chemical Burns'],
+  [82,79,74,68,61,57,48,43,24],
+  '#3a9bdc'
+);
+
+// ── SECURITY ──
+makeHBar('securityChart',
+  ['No Major Concerns','Data Breaches / Hacking','Facility Attack / Data Loss','Unauthorised Staff Access','Device Theft / Loss','Government Surveillance'],
+  [35,27,20,18,11,9],
+  PAL
+);
+
+// ── STORAGE ──
+makeDoughnut('storageChart',
+  ['Encrypted Cloud','Hybrid (Local + Cloud Sync)','Local Server at Facility','Local Device Only','Whatever Is Most Secure'],
+  [34,31,20,20,18]
+);
+
+// ── REPORTS ──
+makeVBar('reportsChart',
+  ['No','Govt. Health\nAuthorities','NGOs /\nHumanitarian','WHO /\nIntl. Bodies','Unsure'],
+  [44,32,19,12,16],
+  ['#4cbb7f','#3a9bdc','#f4a63a','#1abc9c','#9b59b6']
+);
+
+// ── TRAINING TIME ──
+makePie('trainingTimeChart',
+  ['Less than 1 Hour','1–3 Hours','4–8 Hours (Full Day)','More than 8 Hours'],
+  [28,42,14,9]
+);
+
+// ── TRAINING TYPE ──
+makePie('trainingTypeChart',
+  ['Video Tutorials (self-paced)','In-Person Training','Written Guides / Manuals','Built-in System Tutorials','Peer-to-Peer from Colleagues'],
+  [68,23,12,10,7]
+);
+
+// ── TECH HELP ──
+makePie('techHelpChart',
+  ['Offline Help Documentation','Phone / Messaging Helpline','Wait for Internet Access','Local Community Support'],
+  [66,30,26,5]
+);
+</script>
+</body>
+</html>
